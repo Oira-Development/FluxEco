@@ -1,0 +1,25 @@
+#  ______ _            ______
+# |  ____| |          |  ____|
+# | |__  | |_   ___  _| |__   ___ ___
+# |  __| | | | | \ \/ /  __| / __/ _ \
+# | |    | | |_| |>  <| |___| (_| (_) |
+# |_|    |_|\__,_/_/\_\______\___\___/
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#                       ⚙ Database Configuration ⚙
+#             Website:        https://oira.io
+#             Documentation:  https://oira.io/docs
+#             Discord:        https://discord.gg/oira
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+database:
+  type: sqlite  # Database type: sqlite (file-based, no setup needed), mysql, mongodb, h2
+  mysql:
+    host: localhost  # MySQL server address (e.g., 127.0.0.1 or your host)
+    port: 3306  # MySQL server port (default is 3306)
+    database: kyver  # Name of the MySQL database to use
+    username: root  # MySQL username with access to the database
+    password: password  # MySQL password for the username
+    poolSize: 6  # Number of connections to maintain in the pool
+    ssl: false  # Enable SSL for secure connections (set to true if required)
+    uri: ""  # Custom JDBC URI (overrides all above settings if set)
+  mongodb:
+    uri: mongodb://localhost:27017/kyver  # MongoDB connection URI (includes host, port, database)

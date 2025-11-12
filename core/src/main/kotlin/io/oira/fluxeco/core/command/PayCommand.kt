@@ -1,0 +1,111 @@
+package io.oira.fluxeco.core.command
+
+import io.oira.fluxeco.FluxEco
+import io.oira.fluxeco.core.manager.EconomyManager
+import io.oira.fluxeco.core.manager.ConfigManager
+import io.oira.fluxeco.core.manager.MessageManager
+import io.oira.fluxeco.core.manager.SoundManager
+import io.oira.fluxeco.core.manager.TransactionManager
+import io.oira.fluxeco.core.manager.SettingsManager
+import io.oira.fluxeco.core.util.Placeholders
+import io.oira.fluxeco.core.util.format
+import io.oira.fluxeco.core.util.parseNum
+import io.oira.fluxeco.core.lamp.AsyncOfflinePlayer
+import org.bukkit.entity.Player
+import revxrsal.commands.annotation.Command
+import revxrsal.commands.annotation.Description
+import revxrsal.commands.bukkit.annotation.CommandPermission
+import revxrsal.commands.annotation.Named
+import io.oira.fluxeco.core.util.Threads
+
+@Command("pay")
+class PayCommand {
+
+    private val plugin: FluxEco = FluxEco.instance
+    private val messageManager: MessageManager = MessageManager.getInstance()
+    private val configManager = ConfigManager(plugin, "messages.yml")
+    private val foliaLib = FluxEco.instance.foliaLib
+
+    @Description("Pays money to another player.")
+    @CommandPermission("fluxeco.command.pay")
+    fun pay(sender: Player, @Named("target") target: AsyncOfflinePlayer, @Named("amount") amount: String) {
+        val parsedAmount = try {
+            amount.parseNum()
+        } catch (_: Exception) {
+            messageManager.sendMessageFromConfig(sender, "general.invalid-amount", config = configManager)
+            SoundManager.getInstance().playErrorSound(sender, configManager)
+            return
+        }
+
+        if (parsedAmount <= 0) {
+            messageManager.sendMessageFromConfig(sender, "general.invalid-amount", config = configManager)
+            SoundManager.getInstance().playErrorSound(sender, configManager)
+            return
+        }
+
+        Threads.runAsync {
+            val offlinePlayer = target.getOrFetch()
+            if (offlinePlayer.player == null && !plugin.config.getBoolean("general.allow-offline-payments")) {
+                foliaLib.scheduler.run {
+                    messageManager.sendMessageFromConfig(sender, "pay.offline-disabled", config = configManager)
+                    SoundManager.getInstance().playErrorSound(sender, configManager)
+                }
+                return@runAsync
+            }
+            if (offlinePlayer.uniqueId == sender.uniqueId) {
+                foliaLib.scheduler.run {
+                    messageManager.sendMessageFromConfig(sender, "pay.self", config = configManager)
+                    SoundManager.getInstance().playErrorSound(sender, configManager)
+                }
+                return@runAsync
+            }
+
+            if (!SettingsManager.getTogglePayments(offlinePlayer.uniqueId)) {
+                foliaLib.scheduler.run {
+                    val placeholders = Placeholders().add("player", target.getName())
+                    messageManager.sendMessageFromConfig(sender, "pay.disabled", placeholders, config = configManager)
+                    SoundManager.getInstance().playErrorSound(sender, configManager)
+                }
+                return@runAsync
+            }
+
+            val senderBalance = EconomyManager.getBalance(sender.uniqueId)
+            if (senderBalance < parsedAmount) {
+                foliaLib.scheduler.run {
+                    messageManager.sendMessageFromConfig(sender, "pay.insufficient-funds", config = configManager)
+                    SoundManager.getInstance().playErrorSound(sender, configManager)
+                }
+                return@runAsync
+            }
+
+            val success = EconomyManager.subtractBalance(sender.uniqueId, parsedAmount)
+            if (success) {
+                EconomyManager.addBalance(offlinePlayer.uniqueId, parsedAmount)
+                TransactionManager.recordTransfer(sender.uniqueId, offlinePlayer.uniqueId, parsedAmount)
+                val newSenderBalance = EconomyManager.getBalance(sender.uniqueId)
+                foliaLib.scheduler.run {
+                    val placeholders = Placeholders()
+                        .add("player", target.getName())
+                        .add("amount", parsedAmount.format())
+                        .add("balance", newSenderBalance.format())
+
+                    messageManager.sendMessageFromConfig(sender, "pay.success", placeholders, config = configManager)
+                    offlinePlayer.player?.let { onlineTarget ->
+                        val targetPlaceholders = Placeholders()
+                            .add("player", sender.name)
+                            .add("amount", parsedAmount.format())
+                        if (SettingsManager.getPayAlerts(offlinePlayer.uniqueId)) {
+                            messageManager.sendMessageFromConfig(onlineTarget, "pay.receive", targetPlaceholders, config = configManager)
+                        }
+                    }
+                    SoundManager.getInstance().playTeleportSound(sender, configManager)
+                }
+            } else {
+                foliaLib.scheduler.run {
+                    messageManager.sendMessageFromConfig(sender, "pay.insufficient-funds", config = configManager)
+                    SoundManager.getInstance().playErrorSound(sender, configManager)
+                }
+            }
+        }
+    }
+}

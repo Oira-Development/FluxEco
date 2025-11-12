@@ -1,0 +1,62 @@
+#  ______ _            ______
+# |  ____| |          |  ____|
+# | |__  | |_   ___  _| |__   ___ ___
+# |  __| | | | | \ \/ /  __| / __/ _ \
+# | |    | | |_| |>  <| |___| (_| (_) |
+# |_|    |_|\__,_/_/\_\______\___\___/
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#                       ⚙ Main Configuration ⚙
+#             Website:        https://oira.io
+#             Documentation:  https://oira.io/docs
+#             Discord:        https://discord.gg/oira
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+general:
+  # Default starting balance for new players
+  starting-balance: 100
+  # Set the default pay toggle state for new players (true = enabled, false = disabled)
+  pay-toggle: true
+  # How should dates be formatted
+  date-format: "dd/MM/yyyy HH:mm"
+  # How should transaction IDs be generated
+  id-format: sequential # "random" or "sequential"
+  # Whether to allow offline payments
+  allow-offline-payments: true
+
+# This is all used by Vault
+currency:
+  # Singular name of the currency
+  name: "Dollar"
+  # Plural name of the currency
+  name-plural: "Dollars"
+
+format:
+  # Maximum number of decimal places to display for currency values (0-10)
+  max-decimal-places: 2
+  # Whether to abbreviate large numbers (1.5K instead of 1,500)
+  abbreviate: true
+  # Use uppercase suffixes (K, M, B) instead of lowercase (k, m, b)
+  uppercase: true
+  # Advanced abbreviation settings
+  override-abbreviations: false
+  suffixes:
+    - ""
+    - K
+    - M
+    - B
+    - T
+    - Qa
+    - Qt
+    - Sx
+    - Sp
+    - Oc
+    - No
+    - De
+    - Ud
+    - Dd
+    - Td
+    - Qd
+
+advanced:
+  # Maximum number of concurrent async operations (pool size)
+  max-pool-size: 6

@@ -1,0 +1,88 @@
+#  ______ _            ______
+# |  ____| |          |  ____|
+# | |__  | |_   ___  _| |__   ___ ___
+# |  __| | | | | \ \/ /  __| / __/ _ \
+# | |    | | |_| |>  <| |___| (_| (_) |
+# |_|    |_|\__,_/_/\_\______\___\___/
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#                   ⚙ Baltop GUU Configuration ⚙
+#             Website:        https://oira.io
+#             Documentation:  https://oira.io/docs
+#             Discord:        https://discord.gg/oira
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+title: "ᴍᴏꜱᴛ ᴍᴏɴᴇʏ ({page}/{max-page})"  # {page} and {max-page} are dynamic placeholders
+search-title: "sᴇᴀʀᴄʜ ʀᴇꜱᴜʟᴛs for '{query}' ({page}/{max-page})"  # {query} is the search term
+
+gui-size: 54
+
+items:
+  previous_page:
+    material: ARROW
+    name: "&#00FE78ʙᴀᴄᴋ"
+    lore:
+      - "&fClick to go to the previous page"
+    slot: 45
+    action: "previous_page"
+    sound: UI_BUTTON_CLICK
+
+  next_page:
+    material: ARROW
+    name: "&#00FE78ɴᴇxᴛ"
+    lore:
+      - "&fClick to go to the next page"
+    slot: 53
+    action: "next_page"
+    sound: UI_BUTTON_CLICK
+
+  player:
+    material: PLAYER_HEAD
+    name: "&#E53935{player}"  # {player} is replaced dynamically
+    lore:
+      - "&fMoney: &f${balance} &#E53935(#{user-rank})"
+    slot: 48
+    action: "player"
+    sound: UI_BUTTON_CLICK
+
+  refresh:
+    material: EMERALD
+    name: "&#E53935ᴍᴏꜱᴛ ᴍᴏɴᴇʏ"
+    lore:
+      - "&fClick to refresh!"
+    slot: 49
+    cooldown: 0 # in seconds
+    action: "refresh"
+    sound: UI_BUTTON_CLICK
+
+  search:
+    material: OAK_SIGN
+    name: "&#E53935sᴇᴀʀᴄʜ"
+    lore:
+      - "&fClick to search for players"
+    slot: 50
+    action: "search"
+    sound: UI_BUTTON_CLICK
+
+  entry:
+    material: PLAYER_HEAD
+    name: "&#E53935{player}"  # Dynamic player name
+    lore:
+      - "&fMoney: &f${balance} &#E53935(#{rank})"
+    fill: 0-44  # Fills slots 0 to 44 with player entries
+    action: "entry"
+    sound: UI_BUTTON_CLICK
+
+sounds:
+  enabled: true
+  open: UI_BUTTON_CLICK
+  close: UI_BUTTON_CLICK
+  error: ENTITY_VILLAGER_NO
+
+messages:
+  open: "&aShowing top players by balance. Total: &e{total}"
+  entry-click: "&a{player} &7- Rank: &e#{rank} &7- Balance: &a{balance}"
+  previous-page-error: "&cYou are already on the first page!"
+  next-page-error: "&cYou are already on the last page!"
+  refresh-cooldown: "&cPlease wait {remaining} seconds before refreshing again."
+  refresh-success: "&aBalances refreshed!"
+  search-not-implemented: "&cSearch feature not implemented yet."
+  player-data-not-found: "&cPlayer data not found."

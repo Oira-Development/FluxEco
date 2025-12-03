@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm") version "2.2.20" apply false
     id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20" apply false
-    id("org.jetbrains.dokka") version "1.9.20" apply false
 }
 
 group = "io.oira"

@@ -1,14 +1,8 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("org.jetbrains.dokka")
 }
 
 group = "io.oira"
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
 
 tasks.jar {
     archiveBaseName.set("FluxEco-API")
@@ -18,5 +12,5 @@ tasks.jar {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
 }

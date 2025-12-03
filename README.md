@@ -30,9 +30,9 @@ To build the plugin yourself:
 
 - [x] Add Redis cross server support
 - [ ] Add MongoDB support
-- [ ] Implement Stats GUI (optional)
+- [x] Implement Stats GUI (optional)
 - [x] Implement Confirm GUI (optional)
-- [ ] Make more configurable
+- [x] Make more configurable
 - [ ] Add Vault migration
 - [ ] Add database migration
 

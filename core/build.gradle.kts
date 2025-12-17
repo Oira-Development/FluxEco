@@ -32,16 +32,20 @@ dependencies {
     library("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", "2.2.21")
     library("org.jetbrains.kotlinx", "kotlinx-serialization-json", "1.9.0")
 
-    library("io.github.revxrsal", "lamp.common", "4.0.0-rc.14")
-    library("io.github.revxrsal", "lamp.bukkit", "4.0.0-rc.14")
-    library("io.github.revxrsal", "lamp.brigadier", "4.0.0-rc.14")
+    val lampVersion = "4.0.0-rc.14"
+    val exposedVersion = "0.61.0"
+
+    library("io.github.revxrsal", "lamp.common", lampVersion)
+    library("io.github.revxrsal", "lamp.bukkit", lampVersion)
+    library("io.github.revxrsal", "lamp.brigadier", lampVersion)
+
+    library("org.jetbrains.exposed", "exposed-core", exposedVersion)
+    library("org.jetbrains.exposed", "exposed-dao", exposedVersion)
+    library("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
+    library("org.jetbrains.exposed", "exposed-java-time", exposedVersion)
+    library("org.jetbrains.exposed", "exposed-kotlin-datetime", exposedVersion)
 
     library("com.zaxxer", "HikariCP", "7.0.2")
-    library("org.jetbrains.exposed", "exposed-core", "1.0.0")
-    library("org.jetbrains.exposed", "exposed-dao", "1.0.0")
-    library("org.jetbrains.exposed", "exposed-jdbc", "1.0.0")
-    library("org.jetbrains.exposed", "exposed-java-time", "1.0.0")
-    library("org.jetbrains.exposed", "exposed-kotlin-datetime", "1.0.0")
 
     library("org.xerial", "sqlite-jdbc", "3.51.0.0")
     library("com.mysql", "mysql-connector-j", "9.5.0")
@@ -51,7 +55,7 @@ dependencies {
     library("org.mongodb", "bson-kotlinx", "5.6.1")
 
     library("de.rapha149.signgui", "signgui", "2.5.4")
-    library("com.tcoded", "FoliaLib", "0.4.4")
+    library("com.tcoded", "FoliaLib", "0.5.1")
     library("redis.clients", "jedis", "7.0.0")
 
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")

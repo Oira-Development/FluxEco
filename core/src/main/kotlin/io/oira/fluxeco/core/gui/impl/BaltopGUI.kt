@@ -20,9 +20,9 @@ package io.oira.fluxeco.core.gui.impl
 
 import com.destroystokyo.paper.profile.ProfileProperty
 import com.google.gson.JsonObject
-import io.oira.fluxeco.core.cache.CacheManager
-import io.oira.fluxeco.core.data.model.Balance
+import io.oira.fluxeco.api.model.Balance
 import io.oira.fluxeco.core.gui.BaseGUI
+import io.oira.fluxeco.core.manager.CacheManager
 import io.oira.fluxeco.core.util.Placeholders
 import io.oira.fluxeco.core.util.Threads
 import io.oira.fluxeco.core.util.format

@@ -20,7 +20,7 @@ package io.oira.fluxeco.core.data.mongodb.repository
 
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.ReplaceOptions
-import io.oira.fluxeco.core.data.model.Balance
+import io.oira.fluxeco.api.model.Balance
 import io.oira.fluxeco.core.data.mongodb.MongoDBManager
 import io.oira.fluxeco.core.data.mongodb.document.BalanceDocument
 import kotlinx.coroutines.flow.firstOrNull

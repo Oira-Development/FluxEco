@@ -18,10 +18,10 @@
 
 package io.oira.fluxeco.core.gui.impl
 
-import io.oira.fluxeco.core.cache.CacheManager
-import io.oira.fluxeco.core.data.model.Transaction
-import io.oira.fluxeco.core.data.model.TransactionType
+import io.oira.fluxeco.api.model.Transaction
+import io.oira.fluxeco.api.model.TransactionType
 import io.oira.fluxeco.core.gui.BaseGUI
+import io.oira.fluxeco.core.manager.CacheManager
 import io.oira.fluxeco.core.util.DateFormatter
 import io.oira.fluxeco.core.util.Placeholders
 import io.oira.fluxeco.core.util.format
@@ -165,7 +165,7 @@ class HistoryGUI : BaseGUI("gui/history-ui.yml") {
 
     private fun getDisplayName(uuid: UUID, viewerUuid: UUID): String {
         if (uuid == UUID(0, 0)) return "Console"
-        return if (uuid == viewerUuid) "You" else CacheManager.getPlayerProfile(uuid)?.name ?: Bukkit.getOfflinePlayer(uuid).name ?: "Unknown"
+        return if (uuid == viewerUuid) "You" else CacheManager.getProfile(uuid)?.name ?: Bukkit.getOfflinePlayer(uuid).name ?: "Unknown"
     }
 
     fun openForPlayer(viewer: Player, targetUuid: UUID) {

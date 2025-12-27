@@ -19,7 +19,7 @@
 package io.oira.fluxeco.core.integration
 
 import io.oira.fluxeco.core.FluxEco
-import io.oira.fluxeco.core.cache.CacheManager
+import io.oira.fluxeco.core.manager.CacheManager
 import io.oira.fluxeco.core.manager.EconomyManager
 import io.oira.fluxeco.core.util.format
 import net.milkbowl.vault.economy.AbstractEconomy

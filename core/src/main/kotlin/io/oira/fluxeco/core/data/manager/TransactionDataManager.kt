@@ -18,10 +18,10 @@
 
 package io.oira.fluxeco.core.data.manager
 
+import io.oira.fluxeco.api.model.Transaction
+import io.oira.fluxeco.api.model.TransactionType
 import io.oira.fluxeco.core.FluxEco
 import io.oira.fluxeco.core.data.DatabaseManager
-import io.oira.fluxeco.core.data.model.Transaction
-import io.oira.fluxeco.core.data.model.TransactionType
 import io.oira.fluxeco.core.data.mongodb.repository.MongoTransactionRepository
 import io.oira.fluxeco.core.data.table.Transactions
 import io.oira.fluxeco.core.util.Threads

@@ -19,8 +19,8 @@
 package io.oira.fluxeco.core.gui.impl
 
 import io.oira.fluxeco.core.FluxEco
-import io.oira.fluxeco.core.cache.CacheManager
 import io.oira.fluxeco.core.gui.BaseGUI
+import io.oira.fluxeco.core.manager.CacheManager
 import io.oira.fluxeco.core.util.Placeholders
 import io.oira.fluxeco.core.util.format
 import org.bukkit.Bukkit

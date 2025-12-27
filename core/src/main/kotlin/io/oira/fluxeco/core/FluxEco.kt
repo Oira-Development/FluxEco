@@ -23,7 +23,6 @@ import io.oira.fluxeco.api.IFluxEcoAPI
 import io.oira.fluxeco.core.api.EconomyManagerImpl
 import io.oira.fluxeco.core.api.FluxEcoAPIImpl
 import io.oira.fluxeco.core.api.TransactionManagerImpl
-import io.oira.fluxeco.core.cache.CacheManager
 import io.oira.fluxeco.core.data.DatabaseManager
 import io.oira.fluxeco.core.gui.impl.BaltopGUI
 import io.oira.fluxeco.core.gui.impl.ConfirmPaymentGUI
@@ -35,10 +34,7 @@ import io.oira.fluxeco.core.integration.PlaceholderAPI
 import io.oira.fluxeco.core.integration.Vault
 import io.oira.fluxeco.core.listener.PlayerJoinListener
 import io.oira.fluxeco.core.listener.PlayerQuitListener
-import io.oira.fluxeco.core.manager.CommandManager
-import io.oira.fluxeco.core.manager.ConfigManager
-import io.oira.fluxeco.core.manager.EconomyManager
-import io.oira.fluxeco.core.manager.MessageManager
+import io.oira.fluxeco.core.manager.*
 import io.oira.fluxeco.core.redis.RedisManager
 import io.oira.fluxeco.core.util.DateFormatter
 import io.oira.fluxeco.core.util.NumberFormatter
@@ -285,14 +281,14 @@ class FluxEco : JavaPlugin() {
         val manager = MessageManager.getInstance()
 
         val banner = """
-            
-        &r &f&#B833FF███████╗██╗     ██╗   ██╗██╗  ██╗███████╗ ██████╗ ██████╗ 
+
+        &r &f&#B833FF███████╗██╗     ██╗   ██╗██╗  ██╗███████╗ ██████╗ ██████╗
         &r &f&#B833FF██╔════╝██║     ██║   ██║╚██╗██╔╝██╔════╝██╔════╝██╔═══██╗
         &r &f&#B833FF█████╗  ██║     ██║   ██║ ╚███╔╝ █████╗  ██║     ██║   ██║
         &r &f&#B833FF██╔══╝  ██║     ██║   ██║ ██╔██╗ ██╔══╝  ██║     ██║   ██║
         &r &f&#B833FF██║     ███████╗╚██████╔╝██╔╝ ██╗███████╗╚██████╗╚██████╔╝
-        &r &f&#B833FF╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ 
-                                                                                    
+        &r &f&#B833FF╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝
+
     """.trimIndent()
 
         banner.lines().forEach { line ->

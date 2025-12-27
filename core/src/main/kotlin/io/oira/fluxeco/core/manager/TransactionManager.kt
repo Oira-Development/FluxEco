@@ -18,10 +18,9 @@
 
 package io.oira.fluxeco.core.manager
 
-import io.oira.fluxeco.core.cache.CacheManager
+import io.oira.fluxeco.api.model.Transaction
+import io.oira.fluxeco.api.model.TransactionType
 import io.oira.fluxeco.core.data.manager.TransactionDataManager
-import io.oira.fluxeco.core.data.model.Transaction
-import io.oira.fluxeco.core.data.model.TransactionType
 import io.oira.fluxeco.core.util.Threads
 import java.util.*
 

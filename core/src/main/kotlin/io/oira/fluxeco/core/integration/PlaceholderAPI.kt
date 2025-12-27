@@ -18,7 +18,7 @@
 
 package io.oira.fluxeco.core.integration
 
-import io.oira.fluxeco.core.cache.CacheManager
+import io.oira.fluxeco.core.manager.CacheManager
 import io.oira.fluxeco.core.manager.SettingsManager
 import io.oira.fluxeco.core.util.format
 import me.clip.placeholderapi.expansion.PlaceholderExpansion

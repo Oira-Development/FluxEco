@@ -22,7 +22,7 @@ import io.github.miniplaceholders.kotlin.asInsertingTag
 import io.github.miniplaceholders.kotlin.audience
 import io.github.miniplaceholders.kotlin.expansion
 import io.github.miniplaceholders.kotlin.global
-import io.oira.fluxeco.core.cache.CacheManager
+import io.oira.fluxeco.core.manager.CacheManager
 import io.oira.fluxeco.core.manager.SettingsManager
 import io.oira.fluxeco.core.util.format
 import net.kyori.adventure.text.Component

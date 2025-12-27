@@ -19,8 +19,8 @@
 package io.oira.fluxeco.core.listener
 
 import com.google.gson.JsonParser
-import io.oira.fluxeco.core.data.manager.BalancesDataManager
 import io.oira.fluxeco.core.data.manager.PlayerProfileManager
+import io.oira.fluxeco.core.manager.CacheManager
 import io.oira.fluxeco.core.manager.EconomyManager
 import io.oira.fluxeco.core.redis.RedisManager
 import org.bukkit.event.EventHandler
@@ -56,7 +56,10 @@ class PlayerJoinListener : Listener {
 
         PlayerProfileManager.setProfile(uuid, name, skinUrl, capeUrl)
 
-        if (BalancesDataManager.getBalance(uuid) == null) {
+        CacheManager.onPlayerJoin(uuid)
+
+        val balance = EconomyManager.getBalance(uuid)
+        if (balance == 0.0) {
             EconomyManager.createBalance(uuid)
         }
 

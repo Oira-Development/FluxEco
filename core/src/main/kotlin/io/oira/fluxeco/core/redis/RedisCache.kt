@@ -18,10 +18,10 @@
 
 package io.oira.fluxeco.core.redis
 
+import io.oira.fluxeco.api.model.Balance
 import io.oira.fluxeco.api.model.BaltopEntry
 import io.oira.fluxeco.api.model.PlayerSession
 import io.oira.fluxeco.core.FluxEco
-import io.oira.fluxeco.core.data.model.Balance
 import redis.clients.jedis.JedisPool
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap

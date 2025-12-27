@@ -72,6 +72,8 @@ dependencies {
     library("org.mongodb", "mongodb-driver-kotlin-coroutine", "5.6.1")
     library("org.mongodb", "bson-kotlinx", "5.6.1")
 
+    library("com.github.ben-manes.caffeine", "caffeine", "3.1.8")
+
     implementation("de.rapha149.signgui", "signgui", "2.5.4")
     implementation("com.tcoded", "FoliaLib", "0.5.1")
     library("redis.clients", "jedis", "7.0.0")

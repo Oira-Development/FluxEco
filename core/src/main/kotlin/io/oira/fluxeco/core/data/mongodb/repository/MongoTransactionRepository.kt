@@ -20,8 +20,8 @@ package io.oira.fluxeco.core.data.mongodb.repository
 
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Sorts
-import io.oira.fluxeco.core.data.model.Transaction
-import io.oira.fluxeco.core.data.model.TransactionType
+import io.oira.fluxeco.api.model.Transaction
+import io.oira.fluxeco.api.model.TransactionType
 import io.oira.fluxeco.core.data.mongodb.MongoDBManager
 import io.oira.fluxeco.core.data.mongodb.document.TransactionDocument
 import kotlinx.coroutines.flow.toList

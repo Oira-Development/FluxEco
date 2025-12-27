@@ -18,6 +18,7 @@
 
 package io.oira.fluxeco.core.listener
 
+import io.oira.fluxeco.core.manager.CacheManager
 import io.oira.fluxeco.core.redis.RedisManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -29,6 +30,8 @@ class PlayerQuitListener : Listener {
     fun onPlayerQuit(event: PlayerQuitEvent) {
         val player = event.player
         val uuid = player.uniqueId
+
+        CacheManager.onPlayerLeave(uuid)
 
         if (RedisManager.isEnabled) {
             RedisManager.getCache()?.removePlayer(uuid)

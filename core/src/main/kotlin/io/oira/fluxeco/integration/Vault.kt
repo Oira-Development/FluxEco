@@ -21,6 +21,7 @@ package io.oira.fluxeco.integration
 import io.oira.fluxeco.FluxEco
 import io.oira.fluxeco.manager.CacheManager
 import io.oira.fluxeco.manager.EconomyManager
+import io.oira.fluxeco.util.NumberFormatter
 import io.oira.fluxeco.util.format
 import net.milkbowl.vault.economy.AbstractEconomy
 import net.milkbowl.vault.economy.EconomyResponse
@@ -45,7 +46,7 @@ class Vault(private val plugin: FluxEco, private val economyManager: EconomyMana
     }
 
     override fun fractionalDigits(): Int {
-        return 2
+        return NumberFormatter.getFractionalDigits()
     }
 
     override fun format(amount: Double): String {

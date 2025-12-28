@@ -26,6 +26,7 @@ import io.oira.fluxeco.redis.RedisManager
 import io.oira.fluxeco.util.Placeholders
 import io.oira.fluxeco.util.Threads
 import io.oira.fluxeco.util.format
+import io.oira.fluxeco.util.isValidAmount
 import io.oira.fluxeco.util.parseNum
 import org.bukkit.entity.Player
 import revxrsal.commands.annotation.CommandPlaceholder
@@ -54,6 +55,12 @@ class PayCommand : OrphanCommand {
         }
 
         if (parsedAmount <= 0) {
+            messageManager.sendMessageFromConfig(sender, "general.invalid-amount", config = messagesConfigManager)
+            SoundManager.getInstance().playErrorSound(sender, messagesConfigManager)
+            return
+        }
+
+        if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(sender, "general.invalid-amount", config = messagesConfigManager)
             SoundManager.getInstance().playErrorSound(sender, messagesConfigManager)
             return

@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.oira.fluxeco.api
+package io.oira.fluxeco.api.impl
 
 import io.oira.fluxeco.api.IFluxEcoAPI
 import io.oira.fluxeco.api.economy.IEconomyManager

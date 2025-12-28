@@ -20,9 +20,9 @@ package io.oira.fluxeco
 
 import com.tcoded.folialib.FoliaLib
 import io.oira.fluxeco.api.IFluxEcoAPI
-import io.oira.fluxeco.api.EconomyManagerImpl
-import io.oira.fluxeco.api.FluxEcoAPIImpl
-import io.oira.fluxeco.api.TransactionManagerImpl
+import io.oira.fluxeco.api.impl.EconomyManagerImpl
+import io.oira.fluxeco.api.impl.FluxEcoAPIImpl
+import io.oira.fluxeco.api.impl.TransactionManagerImpl
 import io.oira.fluxeco.data.DatabaseManager
 import io.oira.fluxeco.gui.impl.BaltopGUI
 import io.oira.fluxeco.gui.impl.ConfirmPaymentGUI

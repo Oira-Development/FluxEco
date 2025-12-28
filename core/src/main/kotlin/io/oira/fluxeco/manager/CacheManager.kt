@@ -34,6 +34,7 @@ import io.oira.fluxeco.data.table.Balances
 import io.oira.fluxeco.data.table.PlayerSettings
 import io.oira.fluxeco.redis.RedisManager
 import io.oira.fluxeco.util.Threads
+import io.oira.fluxeco.util.normalize
 import org.jetbrains.exposed.sql.replace
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -181,10 +182,11 @@ object CacheManager {
     }
 
     fun setBalance(uuid: UUID, amount: Double) {
+        val normalizedAmount = amount.normalize()
         if (cacheEnabled) {
-            balanceCache.put(uuid, amount)
+            balanceCache.put(uuid, normalizedAmount)
         } else {
-            saveBalanceToDatabase(uuid, amount)
+            saveBalanceToDatabase(uuid, normalizedAmount)
         }
     }
 

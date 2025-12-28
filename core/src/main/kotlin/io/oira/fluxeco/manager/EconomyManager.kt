@@ -24,6 +24,7 @@ import io.oira.fluxeco.data.DatabaseManager
 import io.oira.fluxeco.data.mongodb.repository.MongoBalanceRepository
 import io.oira.fluxeco.data.table.Balances
 import io.oira.fluxeco.util.Threads
+import io.oira.fluxeco.util.normalize
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.deleteWhere
@@ -74,7 +75,8 @@ object EconomyManager {
         CompletableFuture.supplyAsync({ getAllBalances() }, Threads.executor)
 
     fun setBalance(uuid: UUID, amount: Double): Int {
-        CacheManager.setBalance(uuid, amount)
+        val normalizedAmount = amount.normalize()
+        CacheManager.setBalance(uuid, normalizedAmount)
         Threads.runAsync {
             CacheManager.refreshBaltop()
         }

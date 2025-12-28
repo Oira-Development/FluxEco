@@ -31,6 +31,7 @@ object NumberFormatter {
     private var mode = "abbreviated" // "abbreviated" or "commas"
     private var maxDecimals = 2
     private var uppercase = true
+    private var useWholeNumbers = false
 
     private val SUFFIXES_LOWER_DEFAULT = arrayOf("", "k", "m", "b", "t", "qa", "qt", "sx", "sp", "oc", "no", "de", "ud", "dd", "td", "qd")
     private val SUFFIXES_UPPER_DEFAULT = arrayOf("", "K", "M", "B", "T", "Qa", "Qt", "Sx", "Sp", "Oc", "No", "De", "Ud", "Dd", "Td", "Qd")
@@ -50,6 +51,7 @@ object NumberFormatter {
         mode = config.getString("format.mode")?.lowercase() ?: "abbreviated"
         maxDecimals = config.getInt("format.max-decimal-places", 2)
         uppercase = config.getBoolean("format.uppercase", true)
+        useWholeNumbers = config.getBoolean("general.use-whole-numbers", false)
 
         val override = config.getBoolean("format.override-abbreviations", false)
         if (override) {
@@ -76,7 +78,8 @@ object NumberFormatter {
 
     private fun formatWithCommas(num: Double): String {
         val df = DecimalFormat().apply {
-            maximumFractionDigits = maxDecimals
+            val decimalPlaces = if (useWholeNumbers) 0 else maxDecimals
+            maximumFractionDigits = decimalPlaces
             minimumFractionDigits = 0
             isGroupingUsed = true
         }
@@ -86,7 +89,8 @@ object NumberFormatter {
     private fun formatAbbreviated(num: Double): String {
         if (num < 1000) {
             val df = DecimalFormat().apply {
-                maximumFractionDigits = maxDecimals
+                val decimalPlaces = if (useWholeNumbers) 0 else maxDecimals
+                maximumFractionDigits = decimalPlaces
                 minimumFractionDigits = 0
                 isGroupingUsed = true
             }
@@ -97,7 +101,7 @@ object NumberFormatter {
         val scaled = num / 1000.0.pow(index.toDouble())
         val suffixes = if (uppercase) suffixesUpper else suffixesLower
 
-        val formatted = if (scaled == scaled.toInt().toDouble()) {
+        val formatted = if (scaled == scaled.toInt().toDouble() || useWholeNumbers) {
             scaled.toInt().toString()
         } else {
             val df = DecimalFormat().apply {
@@ -132,7 +136,26 @@ object NumberFormatter {
 
         return value * sign
     }
+
+    fun normalize(amount: Double): Double {
+        return if (useWholeNumbers) {
+            kotlin.math.round(amount)
+        } else {
+            amount
+        }
+    }
+
+    fun getFractionalDigits(): Int {
+        return if (useWholeNumbers) 0 else maxDecimals
+    }
+    
+    fun isValidAmount(amount: Double): Boolean {
+        if (!useWholeNumbers) return true
+        return amount == amount.toLong().toDouble()
+    }
 }
 
 fun Number.format(): String = NumberFormatter.format(this.toDouble())
 fun String.parseNum(): Double = NumberFormatter.parse(this)
+fun Double.normalize(): Double = NumberFormatter.normalize(this)
+fun Double.isValidAmount(): Boolean = NumberFormatter.isValidAmount(this)

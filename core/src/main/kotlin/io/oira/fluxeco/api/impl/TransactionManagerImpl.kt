@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.oira.fluxeco.api
+package io.oira.fluxeco.api.impl
 
 import io.oira.fluxeco.api.model.Transaction
 import io.oira.fluxeco.api.model.TransactionType

@@ -26,6 +26,7 @@ import io.oira.fluxeco.redis.RedisManager
 import io.oira.fluxeco.util.Placeholders
 import io.oira.fluxeco.util.Threads
 import io.oira.fluxeco.util.format
+import io.oira.fluxeco.util.isValidAmount
 import io.oira.fluxeco.util.parseNum
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -83,6 +84,12 @@ class EcoCommand : OrphanCommand {
             return
         }
 
+        if (!parsedAmount.isValidAmount()) {
+            messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
+            SoundManager.getInstance().playErrorSound(actor, configManager)
+            return
+        }
+
         target.getOrFetchAsync().thenAccept { offlinePlayer ->
             EconomyManager.addBalanceAsync(offlinePlayer.uniqueId, parsedAmount).thenAccept { _ ->
                 val adminUuid = actor.asPlayer()?.uniqueId ?: UUID(0, 0)
@@ -123,6 +130,12 @@ class EcoCommand : OrphanCommand {
             return
         }
 
+        if (!parsedAmount.isValidAmount()) {
+            messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
+            SoundManager.getInstance().playErrorSound(actor, configManager)
+            return
+        }
+
         val adminUuid = actor.asPlayer()?.uniqueId ?: UUID(0, 0)
         Threads.runAsync {
             for (player in Bukkit.getOnlinePlayers()) {
@@ -157,6 +170,12 @@ class EcoCommand : OrphanCommand {
         }
 
         if (parsedAmount <= 0) {
+            messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
+            SoundManager.getInstance().playErrorSound(actor, configManager)
+            return
+        }
+
+        if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
             SoundManager.getInstance().playErrorSound(actor, configManager)
             return
@@ -206,6 +225,12 @@ class EcoCommand : OrphanCommand {
             return
         }
 
+        if (!parsedAmount.isValidAmount()) {
+            messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
+            SoundManager.getInstance().playErrorSound(actor, configManager)
+            return
+        }
+
         val adminUuid = actor.asPlayer()?.uniqueId ?: UUID(0, 0)
         Threads.runAsync {
             for (player in Bukkit.getOnlinePlayers()) {
@@ -249,6 +274,12 @@ class EcoCommand : OrphanCommand {
             return
         }
 
+        if (!parsedAmount.isValidAmount()) {
+            messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
+            SoundManager.getInstance().playErrorSound(actor, configManager)
+            return
+        }
+
         val adminUuid = actor.asPlayer()?.uniqueId ?: UUID(0, 0)
         Threads.runAsync {
             val offlinePlayer = target.getOrFetch()
@@ -286,6 +317,12 @@ class EcoCommand : OrphanCommand {
         }
 
         if (parsedAmount < 0) {
+            messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
+            SoundManager.getInstance().playErrorSound(actor, configManager)
+            return
+        }
+
+        if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
             SoundManager.getInstance().playErrorSound(actor, configManager)
             return

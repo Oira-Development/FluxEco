@@ -86,7 +86,7 @@ dependencies {
 
 bukkit {
     name = "FluxEco"
-    main = "io.oira.fluxeco.core.FluxEco"
+    main = "io.oira.fluxeco.FluxEco"
 
     authors = listOf("Harfull")
     description = "A modern, optimized, and lightweight economy plugin."

@@ -31,6 +31,8 @@ general:
   allow-offline-payments: true
   # Whether to enable the confirm gui for payments
   confirm-payments: false
+  # Whether or not to disable decimals, good for a coins based economy
+  use-whole-numbers: false
 
 # This is all used by Vault
 currency:

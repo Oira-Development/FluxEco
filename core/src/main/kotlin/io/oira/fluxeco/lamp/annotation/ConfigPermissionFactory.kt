@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.oira.fluxeco.command.permissions
+package io.oira.fluxeco.lamp.annotation
 
 import io.oira.fluxeco.manager.ConfigManager
 import org.bukkit.configuration.file.FileConfiguration

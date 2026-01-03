@@ -32,6 +32,7 @@ import io.oira.fluxeco.integration.Metrics
 import io.oira.fluxeco.integration.MiniPlaceholders
 import io.oira.fluxeco.integration.PlaceholderAPI
 import io.oira.fluxeco.integration.Vault
+import io.oira.fluxeco.lamp.CommandManager
 import io.oira.fluxeco.listener.PlayerJoinListener
 import io.oira.fluxeco.listener.PlayerQuitListener
 import io.oira.fluxeco.manager.*

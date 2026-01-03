@@ -91,12 +91,3 @@ items:
     slot: 18
     action: "back"
     sound: UI_BUTTON_CLICK
-
-sounds:
-  enabled: true
-  open: UI_BUTTON_CLICK
-  close: UI_BUTTON_CLICK
-  error: ENTITY_VILLAGER_NO
-
-messages:
-  open: "&aShowing stats for &e{player}"

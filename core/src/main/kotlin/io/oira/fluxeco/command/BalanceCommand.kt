@@ -19,7 +19,7 @@
 package io.oira.fluxeco.command
 
 import io.oira.fluxeco.FluxEco
-import io.oira.fluxeco.command.permissions.ConfigPermission
+import io.oira.fluxeco.lamp.annotation.ConfigPermission
 import io.oira.fluxeco.lamp.AsyncOfflinePlayer
 import io.oira.fluxeco.manager.ConfigManager
 import io.oira.fluxeco.manager.EconomyManager
@@ -42,7 +42,7 @@ class BalanceCommand : OrphanCommand {
 
     @CommandPlaceholder
     @Description("Shows your current balance.")
-    @ConfigPermission("commands.balance.permissions.base")
+    @ConfigPermission("commands.balance.annotation.base")
     fun balance(sender: Player) {
         val player = AsyncOfflinePlayer.from(sender)
 
@@ -60,7 +60,7 @@ class BalanceCommand : OrphanCommand {
     }
 
     @Description("Shows another player's balance.")
-    @ConfigPermission("commands.balance.permissions.others")
+    @ConfigPermission("commands.balance.annotation.others")
     fun balanceOther(sender: Player, @Named("target") target: AsyncOfflinePlayer) {
         Threads.runAsync {
             val offlinePlayer = target.getOrFetch()

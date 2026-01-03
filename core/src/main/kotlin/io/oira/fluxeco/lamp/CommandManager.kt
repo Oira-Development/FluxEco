@@ -16,12 +16,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.oira.fluxeco.manager
+package io.oira.fluxeco.lamp
 
 import io.oira.fluxeco.FluxEco
-import io.oira.fluxeco.command.*
-import io.oira.fluxeco.command.permissions.ConfigPermissionFactory
-import io.oira.fluxeco.lamp.AsyncOfflinePlayer
+import io.oira.fluxeco.command.BalanceCommand
+import io.oira.fluxeco.command.BaltopCommand
+import io.oira.fluxeco.command.EcoCommand
+import io.oira.fluxeco.command.FluxEcoCommand
+import io.oira.fluxeco.command.HistoryCommand
+import io.oira.fluxeco.command.PayAlertsCommand
+import io.oira.fluxeco.command.PayCommand
+import io.oira.fluxeco.command.PayToggleCommand
+import io.oira.fluxeco.command.StatsCommand
+import io.oira.fluxeco.lamp.annotation.ConfigPermissionFactory
+import io.oira.fluxeco.manager.ConfigManager
 import io.oira.fluxeco.redis.RedisManager
 import org.bukkit.Bukkit
 import revxrsal.commands.bukkit.BukkitLamp
@@ -31,7 +39,7 @@ import kotlin.reflect.KClass
 
 object CommandManager {
 
-    private val plugin: FluxEco = FluxEco.instance
+    private val plugin: FluxEco = FluxEco.Companion.instance
     private val config = ConfigManager(plugin, "commands.yml").getConfig()
 
     private val commandMap: Map<String, KClass<out OrphanCommand>> = mapOf(
@@ -42,7 +50,8 @@ object CommandManager {
         "transaction-history" to HistoryCommand::class,
         "pay-alerts" to PayAlertsCommand::class,
         "pay-toggle" to PayToggleCommand::class,
-        "stats" to StatsCommand::class
+        "stats" to StatsCommand::class,
+        "fluxeco" to FluxEcoCommand::class
     )
 
     fun register() {
@@ -78,6 +87,16 @@ object CommandManager {
                 .build()
 
             commandMap.forEach { (key, clazz) ->
+                if (key == "fluxeco") {
+                    val command = clazz.constructors.first().call()
+                    lamp.register(
+                        Orphans
+                            .path("fluxeco")
+                            .handler(command)
+                    )
+                    return@forEach
+                }
+
                 val section = config.getConfigurationSection("commands.$key") ?: return@forEach
                 if (!section.getBoolean("enabled", true)) return@forEach
 

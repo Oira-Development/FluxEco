@@ -19,7 +19,7 @@
 package io.oira.fluxeco.command
 
 import io.oira.fluxeco.FluxEco
-import io.oira.fluxeco.command.permissions.ConfigPermission
+import io.oira.fluxeco.lamp.annotation.ConfigPermission
 import io.oira.fluxeco.lamp.AsyncOfflinePlayer
 import io.oira.fluxeco.manager.*
 import io.oira.fluxeco.redis.RedisManager
@@ -42,51 +42,51 @@ class EcoCommand : OrphanCommand {
 
     private val plugin: FluxEco = FluxEco.instance
     private val messageManager: MessageManager = MessageManager.getInstance()
+    private val soundManager: SoundManager = SoundManager.getInstance()
     private val configManager = ConfigManager(plugin, "messages.yml")
     private val foliaLib = FluxEco.instance.foliaLib
 
     private fun sendMessage(
-        targetPlayer: OfflinePlayer,
-        messageKey: String,
-        placeholders: Placeholders
+        targetPlayer: OfflinePlayer, messageKey: String, placeholders: Placeholders
     ) {
         val onlinePlayer = targetPlayer.player
         if (onlinePlayer != null && onlinePlayer.isOnline) {
             messageManager.sendMessageFromConfig(onlinePlayer, messageKey, placeholders, config = configManager)
         } else if (RedisManager.isEnabled) {
             RedisManager.getPublisher()?.publishEconomyNotification(
-                targetPlayer.uniqueId,
-                messageKey,
-                placeholders.toMap()
+                targetPlayer.uniqueId, messageKey, placeholders.toMap()
             )
         }
     }
 
     @CommandPlaceholder
-    @ConfigPermission("commands.economy.permissions.base")
-    fun onCommand() {}
+    @ConfigPermission("commands.economy.annotation.base")
+    fun onCommand() {
+    }
 
     @Subcommand("give")
     @Description("Gives money to a player.")
-    @ConfigPermission("commands.economy.permissions.give")
-    fun giveCommand(actor: BukkitCommandActor, @Named("target") target: AsyncOfflinePlayer, @Named("amount") amount: String) {
+    @ConfigPermission("commands.economy.annotation.give")
+    fun giveCommand(
+        actor: BukkitCommandActor, @Named("target") target: AsyncOfflinePlayer, @Named("amount") amount: String
+    ) {
         val parsedAmount = try {
             amount.parseNum()
         } catch (_: Exception) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (parsedAmount <= 0) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
@@ -96,16 +96,14 @@ class EcoCommand : OrphanCommand {
                 TransactionManager.recordAdminReceive(offlinePlayer.uniqueId, parsedAmount, adminUuid)
                 EconomyManager.getBalanceAsync(offlinePlayer.uniqueId).thenAccept { newBalance ->
                     foliaLib.scheduler.run {
-                        val placeholders = Placeholders()
-                            .add("player", actor.asPlayer()?.name ?: "Console")
-                            .add("amount", parsedAmount.format())
-                            .add("balance", newBalance.format())
+                        val placeholders = Placeholders().add("player", actor.asPlayer()?.name ?: "Console")
+                            .add("amount", parsedAmount.format()).add("balance", newBalance.format())
 
-                        messageManager.sendMessageFromConfig(actor, "economy.give-success", placeholders, config = configManager)
+                        messageManager.sendMessageFromConfig(
+                            actor, "economy.give-success", placeholders, config = configManager
+                        )
 
                         sendMessage(offlinePlayer, "economy.receive-money", placeholders)
-
-                        SoundManager.getInstance().playTeleportSound(actor, configManager)
                     }
                 }
             }
@@ -114,25 +112,25 @@ class EcoCommand : OrphanCommand {
 
     @Subcommand("give *")
     @Description("Gives money to all online players.")
-    @ConfigPermission("commands.economy.permissions.give-all")
+    @ConfigPermission("commands.economy.annotation.give-all")
     fun giveCommandAll(actor: BukkitCommandActor, @Named("amount") amount: String) {
         val parsedAmount = try {
             amount.parseNum()
         } catch (_: Exception) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (parsedAmount <= 0) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
@@ -143,41 +141,47 @@ class EcoCommand : OrphanCommand {
                 TransactionManager.recordAdminReceive(player.uniqueId, parsedAmount, adminUuid)
                 val newBalance = EconomyManager.getBalance(player.uniqueId)
                 foliaLib.scheduler.run {
-                    val placeholders = Placeholders()
-                        .add("player", actor.asPlayer()?.name ?: "Console")
-                        .add("amount", parsedAmount.format())
-                        .add("balance", newBalance.format())
-                    messageManager.sendMessageFromConfig(player, "economy.receive-money", placeholders, config = configManager)
+                    val placeholders = Placeholders().add("player", actor.asPlayer()?.name ?: "Console")
+                        .add("amount", parsedAmount.format()).add("balance", newBalance.format())
+                    messageManager.sendMessageFromConfig(
+                        player, "economy.receive-money", placeholders, config = configManager
+                    )
                 }
             }
             foliaLib.scheduler.run {
-                messageManager.sendMessageFromConfig(actor.sender(), "economy.give-all-success", Placeholders().add("amount", parsedAmount.format()), config = configManager)
-                SoundManager.getInstance().playTeleportSound(actor, configManager)
+                messageManager.sendMessageFromConfig(
+                    actor.sender(),
+                    "economy.give-all-success",
+                    Placeholders().add("amount", parsedAmount.format()),
+                    config = configManager
+                )
             }
         }
     }
 
     @Subcommand("take")
     @Description("Takes money from a player.")
-    @ConfigPermission("commands.economy.permissions.take")
-    fun takeCommand(actor: BukkitCommandActor, @Named("target") target: AsyncOfflinePlayer, @Named("amount") amount: String) {
+    @ConfigPermission("commands.economy.annotation.take")
+    fun takeCommand(
+        actor: BukkitCommandActor, @Named("target") target: AsyncOfflinePlayer, @Named("amount") amount: String
+    ) {
         val parsedAmount = try {
             amount.parseNum()
         } catch (_: Exception) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (parsedAmount <= 0) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
@@ -189,19 +193,22 @@ class EcoCommand : OrphanCommand {
                 if (success) {
                     TransactionManager.recordAdminDeduct(offlinePlayer.uniqueId, parsedAmount, adminUuid)
                     val newBalance = EconomyManager.getBalance(offlinePlayer.uniqueId)
-                    val placeholders = Placeholders()
-                        .add("player", actor.asPlayer()?.name ?: "Console")
-                        .add("amount", parsedAmount.format())
-                        .add("balance", newBalance.format())
+                    val placeholders = Placeholders().add("player", actor.asPlayer()?.name ?: "Console")
+                        .add("amount", parsedAmount.format()).add("balance", newBalance.format())
 
-                    messageManager.sendMessageFromConfig(actor, "economy.take-success", placeholders, config = configManager)
+                    messageManager.sendMessageFromConfig(
+                        actor, "economy.take-success", placeholders, config = configManager
+                    )
 
                     sendMessage(offlinePlayer, "economy.money-taken", placeholders)
-
-                    SoundManager.getInstance().playTeleportSound(actor, configManager)
                 } else {
-                    messageManager.sendMessageFromConfig(actor, "economy.insufficient-funds", Placeholders().add("player", target.getName()), config = configManager)
-                    SoundManager.getInstance().playErrorSound(actor, configManager)
+                    messageManager.sendMessageFromConfig(
+                        actor,
+                        "economy.insufficient-funds",
+                        Placeholders().add("player", target.getName()),
+                        config = configManager
+                    )
+                    soundManager.playErrorSound(actor)
                 }
             }
         }
@@ -209,25 +216,25 @@ class EcoCommand : OrphanCommand {
 
     @Subcommand("take *")
     @Description("Takes money from all online players.")
-    @ConfigPermission("commands.economy.permissions.take-all")
+    @ConfigPermission("commands.economy.annotation.take-all")
     fun takeCommandAll(actor: BukkitCommandActor, @Named("amount") amount: String) {
         val parsedAmount = try {
             amount.parseNum()
         } catch (_: Exception) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (parsedAmount <= 0) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
@@ -239,44 +246,55 @@ class EcoCommand : OrphanCommand {
                     if (success) {
                         TransactionManager.recordAdminDeduct(player.uniqueId, parsedAmount, adminUuid)
                         val newBalance = EconomyManager.getBalance(player.uniqueId)
-                        val placeholders = Placeholders()
-                            .add("player", actor.asPlayer()?.name ?: "Console")
-                            .add("amount", parsedAmount.format())
-                            .add("balance", newBalance.format())
-                        messageManager.sendMessageFromConfig(player, "economy.money-taken", placeholders, config = configManager)
+                        val placeholders = Placeholders().add("player", actor.asPlayer()?.name ?: "Console")
+                            .add("amount", parsedAmount.format()).add("balance", newBalance.format())
+                        messageManager.sendMessageFromConfig(
+                            player, "economy.money-taken", placeholders, config = configManager
+                        )
                     } else {
-                        messageManager.sendMessageFromConfig(actor.sender(), "economy.insufficient-funds", Placeholders().add("player", player.name), config = configManager)
+                        messageManager.sendMessageFromConfig(
+                            actor.sender(),
+                            "economy.insufficient-funds",
+                            Placeholders().add("player", player.name),
+                            config = configManager
+                        )
                     }
                 }
             }
             foliaLib.scheduler.run {
-                messageManager.sendMessageFromConfig(actor.sender(), "economy.take-all-success", Placeholders().add("amount", parsedAmount.format()), config = configManager)
-                SoundManager.getInstance().playTeleportSound(actor, configManager)
+                messageManager.sendMessageFromConfig(
+                    actor.sender(),
+                    "economy.take-all-success",
+                    Placeholders().add("amount", parsedAmount.format()),
+                    config = configManager
+                )
             }
         }
     }
 
     @Subcommand("set")
     @Description("Sets a player's balance.")
-    @ConfigPermission("commands.economy.permissions.set")
-    fun setCommand(actor: BukkitCommandActor, @Named("target") target: AsyncOfflinePlayer, @Named("amount") amount: String) {
+    @ConfigPermission("commands.economy.annotation.set")
+    fun setCommand(
+        actor: BukkitCommandActor, @Named("target") target: AsyncOfflinePlayer, @Named("amount") amount: String
+    ) {
         val parsedAmount = try {
             amount.parseNum()
         } catch (_: Exception) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (parsedAmount < 0) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
@@ -290,41 +308,37 @@ class EcoCommand : OrphanCommand {
             else if (diff < 0) TransactionManager.recordAdminDeduct(offlinePlayer.uniqueId, -diff, adminUuid)
 
             foliaLib.scheduler.run {
-                val placeholders = Placeholders()
-                    .add("player", actor.asPlayer()?.name ?: "Console")
-                    .add("amount", parsedAmount.format())
-                    .add("balance", parsedAmount.format())
+                val placeholders = Placeholders().add("player", actor.asPlayer()?.name ?: "Console")
+                    .add("amount", parsedAmount.format()).add("balance", parsedAmount.format())
 
                 messageManager.sendMessageFromConfig(actor, "economy.set-success", placeholders, config = configManager)
 
                 sendMessage(offlinePlayer, "economy.balance-set", placeholders)
-
-                SoundManager.getInstance().playTeleportSound(actor, configManager)
             }
         }
     }
 
     @Subcommand("set *")
     @Description("Sets all online players' balance.")
-    @ConfigPermission("commands.economy.permissions.set-all")
+    @ConfigPermission("commands.economy.annotation.set-all")
     fun setCommandAll(actor: BukkitCommandActor, @Named("amount") amount: String) {
         val parsedAmount = try {
             amount.parseNum()
         } catch (_: Exception) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (parsedAmount < 0) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
         if (!parsedAmount.isValidAmount()) {
             messageManager.sendMessageFromConfig(actor, "general.invalid-amount", config = configManager)
-            SoundManager.getInstance().playErrorSound(actor, configManager)
+            soundManager.playErrorSound(actor)
             return
         }
 
@@ -338,24 +352,29 @@ class EcoCommand : OrphanCommand {
                 else if (diff < 0) TransactionManager.recordAdminDeduct(player.uniqueId, -diff, adminUuid)
 
                 foliaLib.scheduler.run {
-                    val placeholders = Placeholders()
-                        .add("player", actor.asPlayer()?.name ?: "Console")
-                        .add("amount", parsedAmount.format())
-                        .add("balance", parsedAmount.format())
+                    val placeholders = Placeholders().add("player", actor.asPlayer()?.name ?: "Console")
+                        .add("amount", parsedAmount.format()).add("balance", parsedAmount.format())
 
-                    messageManager.sendMessageFromConfig(player, "economy.balance-set", placeholders, config = configManager)
+                    messageManager.sendMessageFromConfig(
+                        player, "economy.balance-set", placeholders, config = configManager
+                    )
                 }
             }
             foliaLib.scheduler.run {
-                messageManager.sendMessageFromConfig(actor.sender(), "economy.set-all-success", Placeholders().add("amount", parsedAmount.format()), config = configManager)
-                SoundManager.getInstance().playTeleportSound(actor, configManager)
+                messageManager.sendMessageFromConfig(
+                    actor.sender(),
+                    "economy.set-all-success",
+                    Placeholders().add("amount", parsedAmount.format()),
+                    config = configManager
+                )
+
             }
         }
     }
 
     @Subcommand("reset")
     @Description("Resets a player's balance to 0.")
-    @ConfigPermission("commands.economy.permissions.reset")
+    @ConfigPermission("commands.economy.annotation.reset")
     fun resetCommand(actor: BukkitCommandActor, @Named("target") target: AsyncOfflinePlayer) {
         val adminUuid = actor.asPlayer()?.uniqueId ?: UUID(0, 0)
         Threads.runAsync {
@@ -364,22 +383,23 @@ class EcoCommand : OrphanCommand {
             EconomyManager.setBalance(offlinePlayer.uniqueId, 0.0)
             if (oldBalance > 0) TransactionManager.recordAdminDeduct(offlinePlayer.uniqueId, oldBalance, adminUuid)
             foliaLib.scheduler.run {
-                val placeholders = Placeholders()
-                    .add("player", actor.asPlayer()?.name ?: "Console")
-                    .add("balance", "0.0")
+                val placeholders =
+                    Placeholders().add("player", actor.asPlayer()?.name ?: "Console").add("balance", "0.0")
 
-                messageManager.sendMessageFromConfig(actor, "economy.reset-success", placeholders, config = configManager)
+                messageManager.sendMessageFromConfig(
+                    actor, "economy.reset-success", placeholders, config = configManager
+                )
 
                 sendMessage(offlinePlayer, "economy.balance-reset", placeholders)
 
-                SoundManager.getInstance().playTeleportSound(actor, configManager)
+
             }
         }
     }
 
     @Subcommand("reset *")
     @Description("Resets all online players' balance to 0.")
-    @ConfigPermission("commands.economy.permissions.reset-all")
+    @ConfigPermission("commands.economy.annotation.reset-all")
     fun resetCommandAll(actor: BukkitCommandActor) {
         val adminUuid = actor.asPlayer()?.uniqueId ?: UUID(0, 0)
         Threads.runAsync {
@@ -388,14 +408,17 @@ class EcoCommand : OrphanCommand {
                 EconomyManager.setBalance(player.uniqueId, 0.0)
                 if (oldBalance > 0) TransactionManager.recordAdminDeduct(player.uniqueId, oldBalance, adminUuid)
                 foliaLib.scheduler.run {
-                    val placeholders = Placeholders()
-                        .add("player", actor.asPlayer()?.name ?: "Console")
-                        .add("balance", "0.0")
-                    messageManager.sendMessageFromConfig(player, "economy.balance-reset", placeholders, config = configManager)
+                    val placeholders =
+                        Placeholders().add("player", actor.asPlayer()?.name ?: "Console").add("balance", "0.0")
+                    messageManager.sendMessageFromConfig(
+                        player, "economy.balance-reset", placeholders, config = configManager
+                    )
                 }
             }
-            messageManager.sendMessageFromConfig(actor.sender(), "economy.reset-all-success", null, config = configManager)
-            SoundManager.getInstance().playTeleportSound(actor, configManager)
+            messageManager.sendMessageFromConfig(
+                actor.sender(), "economy.reset-all-success", null, config = configManager
+            )
+
         }
     }
 }

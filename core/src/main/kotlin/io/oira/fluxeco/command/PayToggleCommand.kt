@@ -19,7 +19,7 @@
 package io.oira.fluxeco.command
 
 import io.oira.fluxeco.FluxEco
-import io.oira.fluxeco.command.permissions.ConfigPermission
+import io.oira.fluxeco.lamp.annotation.ConfigPermission
 import io.oira.fluxeco.manager.ConfigManager
 import io.oira.fluxeco.manager.MessageManager
 import io.oira.fluxeco.manager.SettingsManager
@@ -32,6 +32,7 @@ class PayToggleCommand : OrphanCommand {
 
     private val plugin: FluxEco = FluxEco.instance
     private val messageManager: MessageManager = MessageManager.getInstance()
+    private val soundManager: SoundManager = SoundManager.getInstance()
     private val configManager = ConfigManager(plugin, "messages.yml")
     private val foliaLib = FluxEco.instance.foliaLib
 
@@ -51,7 +52,7 @@ class PayToggleCommand : OrphanCommand {
             null -> SettingsManager.togglePayments(sender.uniqueId)
             else -> {
                 messageManager.sendMessageFromConfig(sender, "general.invalid-amount", config = configManager)
-                SoundManager.getInstance().playErrorSound(sender, configManager)
+                soundManager.playErrorSound(sender)
                 return
             }
         }
@@ -61,7 +62,6 @@ class PayToggleCommand : OrphanCommand {
             } else {
                 messageManager.sendMessageFromConfig(sender, "paytoggle.disabled", config = configManager)
             }
-            SoundManager.getInstance().playTeleportSound(sender, configManager)
         }
     }
 }

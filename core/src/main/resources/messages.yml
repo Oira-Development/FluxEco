@@ -57,3 +57,11 @@ payalerts:
 fluxeco:
   reload-success: "&aFluxEco reloaded successfully in {ms}ms."
   version: "&aFluxEco version: {version}"
+
+gui:
+  previous-page-error: "&cYou are already on the first page!"
+  next-page-error: "&cYou are already on the last page!"
+  refresh-cooldown: "&cPlease wait {remaining} seconds before refreshing again."
+  refresh-success: "&aBalances refreshed!"
+  player-data-not-found: "&cPlayer data not found."
+

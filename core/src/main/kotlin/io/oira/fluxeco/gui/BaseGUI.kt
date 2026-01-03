@@ -43,6 +43,7 @@ abstract class BaseGUI(private val configFile: String) : InventoryHolder, Listen
     protected val messageManager: MessageManager = MessageManager.getInstance()
     protected val soundManager: SoundManager = SoundManager.getInstance()
     protected val configManager: ConfigManager = ConfigManager(plugin, configFile)
+    protected val soundConfigManager: ConfigManager = ConfigManager(plugin, "sounds.yml")
     protected val config = configManager.getConfig()
     protected val actionKey = NamespacedKey(plugin, "action")
     protected val guiIdKey = NamespacedKey(plugin, "gui_id")
@@ -213,7 +214,8 @@ abstract class BaseGUI(private val configFile: String) : InventoryHolder, Listen
         viewers.add(player)
         loadDynamicItems()
         player.openInventory(privateInventory)
-        soundManager.playSoundFromConfig(player, "open", configManager)
+        soundManager.playSoundFromConfig(player, "gui.open", soundConfigManager)
+
         onOpen(player)
     }
 

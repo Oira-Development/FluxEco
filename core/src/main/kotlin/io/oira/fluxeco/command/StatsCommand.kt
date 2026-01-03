@@ -19,7 +19,7 @@
 package io.oira.fluxeco.command
 
 import io.oira.fluxeco.FluxEco
-import io.oira.fluxeco.command.permissions.ConfigPermission
+import io.oira.fluxeco.lamp.annotation.ConfigPermission
 import io.oira.fluxeco.lamp.AsyncOfflinePlayer
 import io.oira.fluxeco.util.Threads
 import org.bukkit.entity.Player
@@ -34,13 +34,13 @@ class StatsCommand : OrphanCommand {
 
     @CommandPlaceholder
     @Description("Opens the stats GUI.")
-    @ConfigPermission("commands.stats.permissions.base")
+    @ConfigPermission("commands.stats.annotation.base")
     fun stats(sender: Player) {
         FluxEco.instance.statsGui.open(sender)
     }
 
     @Description("Opens the stats GUI for a specific player.")
-    @ConfigPermission("commands.stats.permissions.others")
+    @ConfigPermission("commands.stats.annotation.others")
     fun statsOther(sender: Player, @Named("target") target: AsyncOfflinePlayer) {
         Threads.runAsync {
             val offlinePlayer = target.getOrFetch()

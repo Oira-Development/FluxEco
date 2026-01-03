@@ -59,9 +59,8 @@ class ConfirmPaymentGUI : BaseGUI("gui/confirm-ui.yml") {
             val senderBalance = EconomyManager.getBalance(player.uniqueId)
             if (senderBalance < paymentAmount) {
                 plugin.foliaLib.scheduler.run {
-                    val msgConfig = ConfigManager(plugin, "messages.yml")
-                    messageManager.sendMessageFromConfig(player, "pay.insufficient-funds", config = msgConfig)
-                    SoundManager.getInstance().playErrorSound(player, msgConfig)
+                    messageManager.sendMessageFromConfig(player, "pay.insufficient-funds")
+                    soundManager.playErrorSound(player)
                 }
                 return@runAsync
             }
@@ -73,13 +72,12 @@ class ConfirmPaymentGUI : BaseGUI("gui/confirm-ui.yml") {
                 val newSenderBalance = EconomyManager.getBalance(player.uniqueId)
 
                 plugin.foliaLib.scheduler.run {
-                    val msgConfig = ConfigManager(plugin, "messages.yml")
                     val placeholders = Placeholders()
                         .add("player", target.name ?: "Unknown")
                         .add("amount", paymentAmount.format())
                         .add("balance", newSenderBalance.format())
 
-                    messageManager.sendMessageFromConfig(player, "pay.success", placeholders, config = msgConfig)
+                    messageManager.sendMessageFromConfig(player, "pay.success", placeholders)
 
                     if (SettingsManager.getPayAlerts(target.uniqueId)) {
                         val onlineTarget = target.player
@@ -87,7 +85,7 @@ class ConfirmPaymentGUI : BaseGUI("gui/confirm-ui.yml") {
                             val targetPlaceholders = Placeholders()
                                 .add("player", player.name)
                                 .add("amount", paymentAmount.format())
-                            messageManager.sendMessageFromConfig(onlineTarget, "pay.receive", targetPlaceholders, config = msgConfig)
+                            messageManager.sendMessageFromConfig(onlineTarget, "pay.receive", targetPlaceholders)
                         } else if (RedisManager.isEnabled) {
                             RedisManager.getPublisher()?.publishPaymentNotification(
                                 target.uniqueId,
@@ -97,14 +95,11 @@ class ConfirmPaymentGUI : BaseGUI("gui/confirm-ui.yml") {
                             )
                         }
                     }
-
-                    SoundManager.getInstance().playTeleportSound(player, msgConfig)
                 }
             } else {
                 plugin.foliaLib.scheduler.run {
-                    val msgConfig = ConfigManager(plugin, "messages.yml")
-                    messageManager.sendMessageFromConfig(player, "pay.insufficient-funds", config = msgConfig)
-                    SoundManager.getInstance().playErrorSound(player, msgConfig)
+                    messageManager.sendMessageFromConfig(player, "pay.insufficient-funds")
+                    soundManager.playErrorSound(player)
                 }
             }
         }

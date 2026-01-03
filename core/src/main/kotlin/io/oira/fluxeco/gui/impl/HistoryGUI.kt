@@ -22,6 +22,7 @@ import io.oira.fluxeco.api.model.Transaction
 import io.oira.fluxeco.api.model.TransactionType
 import io.oira.fluxeco.gui.BaseGUI
 import io.oira.fluxeco.manager.CacheManager
+import io.oira.fluxeco.manager.ConfigManager
 import io.oira.fluxeco.util.DateFormatter
 import io.oira.fluxeco.util.Placeholders
 import io.oira.fluxeco.util.format
@@ -59,16 +60,16 @@ class HistoryGUI : BaseGUI("gui/history-ui.yml") {
 
     private fun handlePreviousPage(player: Player) {
         if (currentPage > 0) currentPage-- else {
-            messageManager.sendMessageFromConfig(player, "messages.previous-page-error", configManager)
-            soundManager.playSoundFromConfig(player, "error", configManager)
+            messageManager.sendMessageFromConfig(player, "gui.previous-page-error")
+            soundManager.playErrorSound(player)
         }
         refreshDynamicItems()
     }
 
     private fun handleNextPage(player: Player) {
         if (currentPage < getMaxPages() - 1) currentPage++ else {
-            messageManager.sendMessageFromConfig(player, "messages.next-page-error", configManager)
-            soundManager.playSoundFromConfig(player, "error", configManager)
+            messageManager.sendMessageFromConfig(player, "gui.next-page-error")
+            soundManager.playErrorSound(player)
         }
         refreshDynamicItems()
     }
@@ -80,7 +81,7 @@ class HistoryGUI : BaseGUI("gui/history-ui.yml") {
             currentPage = 0
             refreshDynamicItems()
         }
-        messageManager.sendMessageFromConfig(player, "messages.refresh-success", configManager)
+        messageManager.sendMessageFromConfig(player, "messages.refresh-success")
     }
 
     private fun loadTransactions() {

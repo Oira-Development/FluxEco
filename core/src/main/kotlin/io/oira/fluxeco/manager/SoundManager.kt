@@ -22,12 +22,15 @@ import io.oira.fluxeco.FluxEco
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.entity.Player
+import org.spigotmc.SpigotConfig.config
 import revxrsal.commands.bukkit.actor.BukkitCommandActor
 
 @Suppress("unused")
 class SoundManager private constructor() {
 
     private val plugin: FluxEco = FluxEco.instance
+    private val configManager by lazy { ConfigManager(plugin, "sounds.yml") }
+    private val cfg get() = configManager.getConfig()
 
     companion object {
         @Volatile
@@ -51,36 +54,27 @@ class SoundManager private constructor() {
         }
     }
 
-    fun playSoundFromConfig(player: Player, path: String, config: ConfigManager?, volume: Float = 1.0f, pitch: Float = 1.0f) {
-        val soundConfig = config ?: return
-        val cfg = soundConfig.getConfig()
-        if (!cfg.getBoolean("sounds.enabled", true)) return
+    fun playSoundFromConfig(player: Player, path: String, volume: Float = 1.0f, pitch: Float = 1.0f) {
         val sound = cfg.getString("sounds.$path") ?: return
         if (sound.isEmpty()) return
         playSound(player, sound, volume, pitch)
     }
 
-    fun playDelaySound(player: Player, config: ConfigManager?) {
-        playSoundFromConfig(player, "delay", config)
-    }
-
-    fun playTeleportSound(player: Player, config: ConfigManager?) {
-        playSoundFromConfig(player, "teleport", config)
-    }
-
-    fun playErrorSound(player: Player, config: ConfigManager?) {
-        playSoundFromConfig(player, "error", config)
+    fun playSoundFromConfig(player: Player, path: String, config: ConfigManager?, volume: Float = 1.0f, pitch: Float = 1.0f) {
+        val sound = cfg.getString("sounds.$path") ?: return
+        if (sound.isEmpty()) return
+        playSound(player, sound, volume, pitch)
     }
 
     fun playSoundFromConfig(actor: BukkitCommandActor, sound: String, config: ConfigManager) {
         actor.asPlayer()?.let { playSoundFromConfig(it, sound, config) }
     }
 
-    fun playTeleportSound(actor: BukkitCommandActor, config: ConfigManager) {
-        actor.asPlayer()?.let { playTeleportSound(it, config) }
+    fun playErrorSound(actor: BukkitCommandActor) {
+        actor.asPlayer()?.let { playErrorSound(it) }
     }
 
-    fun playErrorSound(actor: BukkitCommandActor, config: ConfigManager) {
-        actor.asPlayer()?.let { playErrorSound(it, config) }
+    fun playErrorSound(player: Player) {
+        playSoundFromConfig(player, "generic.error")
     }
 }

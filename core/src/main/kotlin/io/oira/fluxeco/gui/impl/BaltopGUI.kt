@@ -23,6 +23,7 @@ import com.google.gson.JsonObject
 import io.oira.fluxeco.api.model.Balance
 import io.oira.fluxeco.gui.BaseGUI
 import io.oira.fluxeco.manager.CacheManager
+import io.oira.fluxeco.manager.ConfigManager
 import io.oira.fluxeco.util.Placeholders
 import io.oira.fluxeco.util.Threads
 import io.oira.fluxeco.util.format
@@ -70,8 +71,8 @@ class BaltopGUI : BaseGUI("gui/baltop-ui.yml") {
             currentPage--
             refreshDynamicItems()
         } else {
-            messageManager.sendMessageFromConfig(player, "messages.previous-page-error", configManager)
-            soundManager.playSoundFromConfig(player, "error", configManager)
+            messageManager.sendMessageFromConfig(player, "gui.previous-page-error")
+            soundManager.playErrorSound(player)
         }
     }
 
@@ -80,8 +81,8 @@ class BaltopGUI : BaseGUI("gui/baltop-ui.yml") {
             currentPage++
             refreshDynamicItems()
         } else {
-            messageManager.sendMessageFromConfig(player, "messages.next-page-error", configManager)
-            soundManager.playSoundFromConfig(player, "error", configManager)
+            messageManager.sendMessageFromConfig(player, "gui.next-page-error")
+            soundManager.playErrorSound(player)
         }
     }
 
@@ -103,14 +104,14 @@ class BaltopGUI : BaseGUI("gui/baltop-ui.yml") {
             refreshDynamicItems()
         }
 
-        messageManager.sendMessageFromConfig(player, "messages.refresh-success", configManager)
+        messageManager.sendMessageFromConfig(player, "gui.refresh-success")
     }
 
     private fun sendCooldownMessage(player: Player, refreshCooldown: Long, currentTime: Long) {
         val remaining = ((refreshCooldown - (currentTime - lastRefreshTime)) / 1000.0)
         val placeholders = Placeholders().add("remaining", String.format("%.1f", remaining))
-        messageManager.sendMessageFromConfig(player, "messages.refresh-cooldown", placeholders, configManager)
-        soundManager.playSoundFromConfig(player, "error", configManager)
+        messageManager.sendMessageFromConfig(player, "gui.refresh-cooldown", placeholders)
+        soundManager.playErrorSound(player)
     }
 
     private fun handleSearch(player: Player) {
@@ -136,7 +137,7 @@ class BaltopGUI : BaseGUI("gui/baltop-ui.yml") {
                     plugin.statsGui.openForPlayer(player, uuid, true, currentPage)
                 }
             } else {
-                messageManager.sendMessageFromConfig(player, "messages.player-data-not-found", configManager)
+                messageManager.sendMessageFromConfig(player, "gui.player-data-not-found")
             }
         } catch (_: IllegalArgumentException) {
             plugin.logger.warning("Invalid UUID in baltop entry: $playerUuid")
@@ -350,16 +351,6 @@ class BaltopGUI : BaseGUI("gui/baltop-ui.yml") {
         }
 
         super.open(player)
-    }
-
-    private fun shouldRefreshBalances(): Boolean {
-        return balances.isEmpty() || CacheManager.isBaltopStale()
-    }
-
-    override fun onOpen(player: Player) {
-        val totalPlayers = balances.size
-        val placeholders = Placeholders().add("total", totalPlayers.toString())
-        messageManager.sendMessageFromConfig(player, "messages.open", placeholders, configManager)
     }
 
     override fun reload() {

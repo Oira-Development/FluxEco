@@ -19,7 +19,7 @@
 package io.oira.fluxeco.command
 
 import io.oira.fluxeco.FluxEco
-import io.oira.fluxeco.command.permissions.ConfigPermission
+import io.oira.fluxeco.lamp.annotation.ConfigPermission
 import io.oira.fluxeco.lamp.AsyncOfflinePlayer
 import io.oira.fluxeco.util.Threads
 import org.bukkit.entity.Player
@@ -34,13 +34,13 @@ class HistoryCommand : OrphanCommand {
 
     @CommandPlaceholder
     @Description("Opens the transaction history GUI.")
-    @ConfigPermission("commands.transaction-history.permissions.base")
+    @ConfigPermission("commands.transaction-history.annotation.base")
     fun history(sender: Player) {
         FluxEco.instance.historyGui.open(sender)
     }
 
     @Description("Opens the transaction history GUI for a specific player.")
-    @ConfigPermission("commands.transaction-history.permissions.others")
+    @ConfigPermission("commands.transaction-history.annotation.others")
     fun historyOther(sender: Player, @Named("target") target: AsyncOfflinePlayer) {
         Threads.runAsync {
             val offlinePlayer = target.getOrFetch()

@@ -19,7 +19,7 @@
 package io.oira.fluxeco.command
 
 import io.oira.fluxeco.FluxEco
-import io.oira.fluxeco.command.permissions.ConfigPermission
+import io.oira.fluxeco.lamp.annotation.ConfigPermission
 import org.bukkit.entity.Player
 import revxrsal.commands.annotation.CommandPlaceholder
 import revxrsal.commands.annotation.Description

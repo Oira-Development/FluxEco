@@ -24,7 +24,9 @@ import io.oira.fluxeco.manager.CacheManager
 import io.oira.fluxeco.util.Placeholders
 import io.oira.fluxeco.util.format
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.util.*
 
 class StatsGUI : BaseGUI("gui/stats-ui.yml") {

@@ -142,7 +142,7 @@ object CacheManager {
 
     fun shutdown() {
         stopBackgroundTasks()
-        saveAllToDatabase()
+        saveAllToDatabaseSync()
         clearAllCaches()
         plugin.logger.info("CacheManager shut down, all data saved to database")
     }
@@ -461,17 +461,30 @@ object CacheManager {
 
         Threads.runAsync {
             try {
-                val balancesToSave = balanceCache.asMap().toMap()
+                saveAllToDatabaseSync()
+            } catch (e: Exception) {
+                plugin.logger.severe("Failed to save cached data to database: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
 
-                if (balancesToSave.isEmpty()) {
-                    return@runAsync
+    private fun saveAllToDatabaseSync() {
+        if (!cacheEnabled) return
+
+        try {
+            val balancesToSave = balanceCache.asMap().toMap()
+
+            if (balancesToSave.isEmpty()) {
+                return
+            }
+
+            if (DatabaseManager.isMongoDB()) {
+                balancesToSave.forEach { (uuid, balance) ->
+                    MongoBalanceRepository.updateBalance(uuid, balance)
                 }
-
-                if (DatabaseManager.isMongoDB()) {
-                    balancesToSave.forEach { (uuid, balance) ->
-                        MongoBalanceRepository.updateBalance(uuid, balance)
-                    }
-                } else {
+            } else {
+                try {
                     transaction(DatabaseManager.getDatabase()) {
                         balancesToSave.forEach { (uuid, balance) ->
                             Balances.replace {
@@ -480,13 +493,16 @@ object CacheManager {
                             }
                         }
                     }
+                } catch (e: Exception) {
+                    plugin.logger.severe("Failed to save balances to database: ${e.message}")
+                    e.printStackTrace()
                 }
-
-                plugin.logger.fine("Saved ${balancesToSave.size} balances to database")
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to save cached data to database: ${e.message}")
-                e.printStackTrace()
             }
+
+            plugin.logger.fine("Saved ${balancesToSave.size} balances to database")
+        } catch (e: Exception) {
+            plugin.logger.severe("Failed to save cached data to database: ${e.message}")
+            e.printStackTrace()
         }
     }
 }

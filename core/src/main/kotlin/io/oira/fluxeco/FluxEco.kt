@@ -126,9 +126,9 @@ class FluxEco : JavaPlugin() {
 
             CacheManager.shutdown()
 
-            RedisManager.shutdown()
-
             DatabaseManager.shutdown()
+
+            RedisManager.shutdown()
 
             Threads.close()
 
